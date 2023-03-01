@@ -6,7 +6,7 @@ import java.sql.Timestamp;
  * @author sarhatabaot
  */
 public class Transaction {
-    private final String id; //special class for this
+    private final String id;
     private final int userId;
     private final Timestamp timestamp;
     
