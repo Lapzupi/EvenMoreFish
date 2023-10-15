@@ -35,5 +35,4 @@ jobs:
           prerelease: true
           title: "Development Build"
           files: |
-            LICENSE.txt
-            even-more-fish-plugin/buid/libs/*.jar
+            even-more-fish-plugin/build/libs/*.jar
