@@ -36,4 +36,4 @@ jobs:
           title: "Development Build"
           files: |
             LICENSE.txt
-            even-more-fish-plugin/*.jar
+            even-more-fish-plugin/buid/libs/*.jar
