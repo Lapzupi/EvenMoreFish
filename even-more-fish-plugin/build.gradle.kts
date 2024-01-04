@@ -24,6 +24,7 @@ repositories {
     maven("https://repo.spongepowered.org/maven/")
     maven("https://repo.essentialsx.net/releases/")
     maven("https://repo.auxilor.io/repository/maven-public/")
+    maven("https://repo.aikar.co/content/groups/aikar/")
 }
 
 dependencies {

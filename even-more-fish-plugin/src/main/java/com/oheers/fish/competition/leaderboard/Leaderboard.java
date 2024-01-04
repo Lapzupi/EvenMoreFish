@@ -14,7 +14,7 @@ public class Leaderboard implements LeaderboardHandler {
     CompetitionType type;
     TreeSet<CompetitionEntry> entries;
 
-    Leaderboard(CompetitionType type) {
+    public Leaderboard(CompetitionType type) {
         this.type = type;
         entries = new TreeSet<>();
     }

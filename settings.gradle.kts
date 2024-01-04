@@ -50,6 +50,7 @@ dependencyResolutionManagement {
             library("hikaricp", "com.zaxxer:HikariCP:4.0.3") //We must use 4.0.3 until we upgrade to java 17
             library("json-simple", "com.googlecode.json-simple:json-simple:1.1.1")
 
+            library("acf-commands", "co.aikar:acf-paper:0.5.1-SNAPSHOT")
             library("universalscheduler", "com.github.Anon8281:UniversalScheduler:0.1.6")
         }
     }
