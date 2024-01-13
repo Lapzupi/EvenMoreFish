@@ -1,5 +1,6 @@
 package com.oheers.fish;
 
+import co.aikar.commands.PaperCommandManager;
 import com.github.Anon8281.universalScheduler.UniversalScheduler;
 import com.github.Anon8281.universalScheduler.scheduling.schedulers.TaskScheduler;
 import com.oheers.fish.addons.AddonManager;
@@ -8,6 +9,7 @@ import com.oheers.fish.api.EMFAPI;
 import com.oheers.fish.api.plugin.EMFPlugin;
 import com.oheers.fish.baits.Bait;
 import com.oheers.fish.baits.BaitApplicationListener;
+import com.oheers.fish.commands.EMFDebugCommand;
 import com.oheers.fish.competition.AutoRunner;
 import com.oheers.fish.competition.Competition;
 import com.oheers.fish.competition.CompetitionQueue;
@@ -203,6 +205,9 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin {
 
         listeners();
         commands();
+
+        PaperCommandManager commandManager = new PaperCommandManager(this);
+        commandManager.registerCommand(new EMFDebugCommand());
 
         if (!mainConfig.debugSession()) {
             metrics();

@@ -104,4 +104,20 @@ public class Rarity {
     public List<Requirement> getRequirements() {
         return requirements;
     }
+
+    @Override
+    public String toString() {
+        return "Rarity{" +
+                "overridenLore='" + overridenLore + '\'' +
+                ", permission='" + permission + '\'' +
+                ", value='" + value + '\'' +
+                ", colour='" + colour + '\'' +
+                ", weight=" + weight +
+                ", announce=" + announce +
+                ", fishWeighted=" + fishWeighted +
+                ", hasCompExemptFish=" + hasCompExemptFish +
+                ", displayName='" + displayName + '\'' +
+                ", requirements=" + requirements +
+                '}';
+    }
 }

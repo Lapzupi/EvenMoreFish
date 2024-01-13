@@ -62,6 +62,7 @@ dependencies {
     implementation(libs.nbt.api)
     implementation(libs.bstats)
     implementation(libs.universalscheduler)
+    implementation(libs.acf.commands)
 
     library(libs.friendlyid)
     library(libs.flyway.core)
@@ -160,7 +161,14 @@ bukkit {
     }
 }
 
+
+
 tasks {
+    compileJava {
+        options.compilerArgs.add("-parameters")
+        options.isFork = true
+    }
+
     build {
         dependsOn(shadowJar)
     }
@@ -183,7 +191,9 @@ tasks {
         archiveClassifier.set("shadow")
 
         relocate("de.tr7zw.changeme.nbtapi", "com.oheers.fish.utils.nbt")
-        relocate("org.bstats", "com.oheers.evenmorefish.bstats")
+        relocate("org.bstats", "com.oheers.fish.bstats")
+        relocate("co.aikar.commands", "com.oheers.fish.utils.acf")
+        relocate("co.aikar.locales", "com.oheers.fish.utils.locales")
     }
 
 }

@@ -439,4 +439,32 @@ public class Fish implements Cloneable {
     public void setSilent(boolean silent) {
         this.silent = silent;
     }
+
+    @Override
+    public String toString() {
+        return "Fish{" +
+                "name='" + name + '\'' +
+                ", rarity=" + rarity +
+                ", factory=" + factory +
+                ", fisherman=" + fisherman +
+                ", length=" + length +
+                ", displayName='" + displayName + '\'' +
+                ", actionRewards=" + actionRewards +
+                ", fishRewards=" + fishRewards +
+                ", eventType='" + eventType + '\'' +
+                ", requirements=" + requirements +
+                ", wasBaited=" + wasBaited +
+                ", silent=" + silent +
+                ", allowedRegions=" + allowedRegions +
+                ", weight=" + weight +
+                ", minSize=" + minSize +
+                ", maxSize=" + maxSize +
+                ", isCompExemptFish=" + isCompExemptFish +
+                ", disableFisherman=" + disableFisherman +
+                ", xmasFish=" + xmasFish +
+                ", fishConfig=" + fishConfig +
+                ", rarityConfig=" + rarityConfig +
+                ", day=" + day +
+                '}';
+    }
 }

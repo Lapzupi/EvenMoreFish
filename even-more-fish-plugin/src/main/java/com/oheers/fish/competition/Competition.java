@@ -37,7 +37,6 @@ public class Competition {
     public int numberNeeded;
     public String competitionName;
     public boolean adminStarted;
-    public String competitionID;
     public Message startMessage;
     long maxDuration;
     long timeLeft;
@@ -103,18 +102,21 @@ public class Competition {
 
     }
 
+    private void broadcastLeaderboard() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            new Message(ConfigMessage.COMPETITION_END).broadcast(player, true, true);
+            sendPlayerLeaderboard(player);
+        }
+    }
+
     public void end() {
-        // print leaderboard
         this.timingSystem.cancel();
         this.statusBar.hide();
 
         EMFCompetitionEndEvent endEvent = new EMFCompetitionEndEvent(this);
         Bukkit.getServer().getPluginManager().callEvent(endEvent);
 
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            new Message(ConfigMessage.COMPETITION_END).broadcast(player, true, true);
-            sendPlayerLeaderboard(player);
-        }
+        broadcastLeaderboard();
         active = false;
         handleRewards();
         if (originallyRandom) competitionType = CompetitionType.RANDOM;
@@ -228,6 +230,7 @@ public class Competition {
 
     /**
      * Adds a fish to the leaderboard
+     *
      * @param fish
      * @param fisher
      */
@@ -244,10 +247,8 @@ public class Competition {
                 if (!(fish.getName().equalsIgnoreCase(selectedFish.getName()) && fish.getRarity() == selectedFish.getRarity())) {
                     return;
                 }
-            } else if (competitionType == CompetitionType.SPECIFIC_RARITY) {
-                if (!fish.getRarity().getValue().equals(this.selectedRarity.getValue())) {
-                    return;
-                }
+            } else if (competitionType == CompetitionType.SPECIFIC_RARITY && (!fish.getRarity().getValue().equals(this.selectedRarity.getValue()))) {
+                return;
             }
 
             if ((competitionType == CompetitionType.SPECIFIC_FISH || competitionType == CompetitionType.SPECIFIC_RARITY) && numberNeeded == 1) {
