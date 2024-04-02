@@ -30,7 +30,7 @@ main-menu:
       - "&f&m                                 "
     slot: 10
     button: "command:emf help"
-#   custom-model-data: 1234567
+  #   custom-model-data: 1234567
 
   fish-journal-button:
     item: WRITABLE_BOOK
