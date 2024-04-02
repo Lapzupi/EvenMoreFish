@@ -29,7 +29,6 @@ repositories {
 
 dependencies {
     compileOnly(libs.spigot.api)
-    implementation(project(":even-more-fish-api"))
     compileOnly(libs.vault.api)
     compileOnly(libs.placeholder.api)
     compileOnly(libs.authlib)
@@ -60,10 +59,12 @@ dependencies {
     compileOnly(libs.headdatabase.api)
     compileOnly(libs.playerpoints)
 
+    implementation(project(":even-more-fish-api"))
     implementation(libs.nbt.api)
     implementation(libs.bstats)
     implementation(libs.universalscheduler)
 
+    library(libs.bundles.configurate)
     library(libs.friendlyid)
     library(libs.flyway.core)
     library(libs.flyway.mysql)

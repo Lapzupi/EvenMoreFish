@@ -14,15 +14,22 @@ dependencyResolutionManagement {
             library("placeholder-api", "me.clip:placeholderapi:2.11.3")
             library("authlib", "com.mojang:authlib:1.5.21")
             library("bstats", "org.bstats:bstats-bukkit:3.0.2")
+
             version("worldguard", "7.0.5")//We must use 7.0.5 until we upgrade to java 17
             library("worldguard-core", "com.sk89q.worldguard","worldguard-core").versionRef("worldguard")
             library("worldguard-bukkit", "com.sk89q.worldguard","worldguard-bukkit").versionRef("worldguard")
+            bundle("worldguard", listOf("worldguard-core", "worldguard-bukkit"))
+
             version("worldedit", "7.2.15")
             library("worldedit-core", "com.sk89q.worldedit","worldedit-core").versionRef("worldedit")
             library("worldedit-bukkit", "com.sk89q.worldedit","worldedit-bukkit").versionRef("worldedit")
+            bundle("worldedit", listOf("worldedit-core", "worldedit-bukkit"))
+
             version("redprotect", "7.7.3")
             library("redprotect-core", "br.net.fabiozumbi12.RedProtect","RedProtect-Core").versionRef("redprotect")
             library("redprotect-spigot", "br.net.fabiozumbi12.RedProtect","RedProtect-Spigot-1.13").versionRef("redprotect")
+            bundle("redprotect", listOf("redprotect-core", "redprotect-spigot"))
+
             library("mcmmo", "com.gmail.nossr50.mcMMO:mcMMO:2.1.196")
             library("aurelium-skills", "com.github.Archy-X:AureliumSkills:Beta1.2.8")
             library("headdatabase-api", "com.arcaniax:HeadDatabase-API:1.3.1")
@@ -52,6 +59,11 @@ dependencyResolutionManagement {
 
             library("universalscheduler", "com.github.Anon8281:UniversalScheduler:0.1.6")
             library("playerpoints", "org.black_ixx:playerpoints:3.2.6")
+
+            version("configurate", "4.1.2")
+            library("configurate-core", "org.spongepowered","configurate-core").versionRef("configurate")
+            library("configurate-yaml", "org.spongepowered","configurate-yaml").versionRef("configurate")
+            bundle("configurate", listOf("configurate-core", "configurate-yaml"))
         }
     }
 }
