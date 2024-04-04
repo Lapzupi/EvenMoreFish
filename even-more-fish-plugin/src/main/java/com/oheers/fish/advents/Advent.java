@@ -18,13 +18,16 @@ public class Advent {
     private final List<Rarity> rarities;
     private final List<AdventFish> adventFish;
 
-    public Advent(String id, String displayName, LocalDateTime startDate, LocalDateTime endDate, List<Rarity> rarities, List<AdventFish> adventFish) {
+    private final AdventGui adventGui;
+
+    public Advent(String id, String displayName, LocalDateTime startDate, LocalDateTime endDate, List<Rarity> rarities, List<AdventFish> adventFish, AdventGui adventGui) {
         this.id = id;
         this.displayName = displayName;
         this.startDate = startDate;
         this.endDate = endDate;
         this.rarities = rarities;
         this.adventFish = adventFish;
+        this.adventGui = adventGui;
     }
 
     public String id() {
@@ -49,5 +52,9 @@ public class Advent {
 
     public List<AdventFish> adventFish() {
         return adventFish;
+    }
+
+    public AdventGui adventGui() {
+        return adventGui;
     }
 }

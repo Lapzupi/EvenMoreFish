@@ -12,9 +12,6 @@ import org.spongepowered.configurate.transformation.ConfigurationTransformation;
 public abstract class Transformation {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    public Transformation() {
-    }
-
     public ConfigurationTransformation initialTransformation() {
         return ConfigurationTransformation.builder().addAction(NodePath.path("", ConfigurationTransformation.WILDCARD_OBJECT), (path, value) -> {
             value.node("config-version").set(0);

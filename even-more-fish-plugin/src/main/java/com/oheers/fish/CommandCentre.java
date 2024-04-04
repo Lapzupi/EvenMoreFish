@@ -65,6 +65,7 @@ public class CommandCentre implements TabCompleter, CommandExecutor {
                 "top")
         );
 
+        //todo remove when advent feature is ready
         if (Xmas2022Config.getInstance().isAvailable()) emfTabs.add("xmas");
 
         compTypes = Arrays.asList(

@@ -14,13 +14,14 @@ import java.util.logging.Level;
 public abstract class ConfigurateFile extends ConfigBase {
     protected final YamlConfigurationLoader loader;
     protected final YamlConfigurationLoader.Builder loaderBuilder = this.loadBuilder();
+    protected final String resourceFolder;
     protected CommentedConfigurationNode rootNode;
     protected Transformation transformation;
 
 
     protected ConfigurateFile(String resourceFolder, String fileName) throws ConfigurateException {
         super(fileName);
-
+        this.resourceFolder = resourceFolder;
         this.loaderBuilder.defaultOptions(opts -> opts.serializers(this::builderOptions));
 
         this.loader = this.loaderBuilder.build();

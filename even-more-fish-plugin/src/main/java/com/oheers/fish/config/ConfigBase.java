@@ -15,7 +15,7 @@ import java.util.logging.Level;
 
 public class ConfigBase {
 
-    private final String fileName;
+    protected final String fileName;
     private final EvenMoreFish plugin;
 
     private FileConfiguration config = null;
