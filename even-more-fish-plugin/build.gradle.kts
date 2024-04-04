@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.universalscheduler)
 
     library(libs.bundles.configurate)
+    library(libs.triumph.gui)
     library(libs.friendlyid)
     library(libs.flyway.core)
     library(libs.flyway.mysql)

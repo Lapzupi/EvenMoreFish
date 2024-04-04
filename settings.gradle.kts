@@ -64,6 +64,8 @@ dependencyResolutionManagement {
             library("configurate-core", "org.spongepowered","configurate-core").versionRef("configurate")
             library("configurate-yaml", "org.spongepowered","configurate-yaml").versionRef("configurate")
             bundle("configurate", listOf("configurate-core", "configurate-yaml"))
+
+            library("triumph-gui", "dev.triumphteam:triumph-gui:3.1.7")
         }
     }
 }
