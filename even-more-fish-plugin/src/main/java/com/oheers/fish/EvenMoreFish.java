@@ -60,7 +60,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-public class EvenMoreFish extends JavaPlugin implements EMFPlugin, Listener {
+public class EvenMoreFish extends JavaPlugin implements EMFPlugin {
     private final Random random = new Random();
 
     private Permission permission = null;
@@ -136,6 +136,7 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin, Listener {
         loadRewardManager();
 
         RewardManager.getInstance().load();
+        getServer().getPluginManager().registerEvents(RewardManager.getInstance(), this);
 
         new MainConfig();
         new Messages();
@@ -225,8 +226,6 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin, Listener {
             });
 
         }
-
-        getServer().getPluginManager().registerEvents(this, this);
 
         logger.log(Level.INFO, "EvenMoreFish by Oheers : Enabled");
     }
@@ -701,11 +700,6 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin, Listener {
         new PermissionRewardType().register();
         new PlayerPointsRewardType().register();
         new EXPRewardType().register();
-    }
-
-    @EventHandler
-    public void onServerLoad(ServerLoadEvent event) {
-        Bukkit.getPluginManager().callEvent(new EMFRewardsLoadEvent());
     }
 
 }
