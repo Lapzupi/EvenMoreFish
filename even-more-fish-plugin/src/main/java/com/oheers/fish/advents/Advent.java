@@ -57,4 +57,13 @@ public class Advent {
     public AdventGui adventGui() {
         return adventGui;
     }
+
+    public boolean isActive() {
+        final LocalDateTime now = LocalDateTime.now();
+        return now.isAfter(startDate) && now.isBefore(endDate);
+    }
+
+    public boolean isNotActive() {
+        return !isActive();
+    }
 }

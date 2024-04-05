@@ -25,6 +25,7 @@ repositories {
     maven("https://repo.essentialsx.net/releases/")
     maven("https://repo.auxilor.io/repository/maven-public/")
     maven("https://repo.rosewooddev.io/repository/public/")
+    maven("https://repo.aikar.co/content/groups/aikar/")
 }
 
 dependencies {
@@ -63,6 +64,7 @@ dependencies {
     implementation(libs.nbt.api)
     implementation(libs.bstats)
     implementation(libs.universalscheduler)
+    implementation(libs.acf)
 
     library(libs.bundles.configurate)
     library(libs.triumph.gui)
@@ -191,6 +193,8 @@ tasks {
         relocate("de.tr7zw.changeme.nbtapi", "com.oheers.fish.utils.nbt")
         relocate("org.bstats", "com.oheers.fish.libs.bstats")
         relocate("com.github.Anon8281.universalScheduler", "com.oheers.fish.libs.universalScheduler")
+        relocate("co.aikar.locales", "com.oheers.fish.libs.locales")
+        relocate("co.aikar.commands", "com.oheers.fish.libs.commands")
     }
 
 }

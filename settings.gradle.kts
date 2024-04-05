@@ -66,10 +66,12 @@ dependencyResolutionManagement {
             bundle("configurate", listOf("configurate-core", "configurate-yaml"))
 
             library("triumph-gui", "dev.triumphteam:triumph-gui:3.1.7")
+
+            library("acf", "co.aikar:acf-paper:0.5.1-SNAPSHOT")
         }
     }
 }
 
 plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.8.0"
 }

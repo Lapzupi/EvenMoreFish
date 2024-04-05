@@ -12,7 +12,7 @@ public class Xmas2022Config extends ConfigBase {
     private static Xmas2022Config instance = null;
 
     public Xmas2022Config() {
-        super("xmas2022.yml");
+        super("advent/xmas2022.yml.old");
         instance = this;
     }
 

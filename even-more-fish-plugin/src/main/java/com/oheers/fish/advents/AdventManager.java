@@ -5,10 +5,7 @@ import com.oheers.fish.config.configurate.ConfigUtil;
 import org.spongepowered.configurate.ConfigurateException;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -36,7 +33,7 @@ public class AdventManager {
         }
 
         final List<String> adventFileNames = Arrays.stream(adventFiles).map(File::getName).collect(Collectors.toList());
-        for (final String name: adventFileNames) {
+        for (final String name : adventFileNames) {
             try {
                 final AdventConfig config = new AdventConfig(name);
                 adventMap.put(config.getAdvent().id(), config);
@@ -65,5 +62,18 @@ public class AdventManager {
     public Advent getAdvent(final String name) {
         return adventMap.get(name).getAdvent();
     }
+
+    public List<Advent> getActiveAdvents() {
+        return adventMap.values().stream().map(AdventConfig::getAdvent).filter(Advent::isActive).collect(Collectors.toList());
+    }
+
+    public List<Advent> getAdvents() {
+        return adventMap.values().stream().map(AdventConfig::getAdvent).collect(Collectors.toList());
+    }
+
+    public List<Advent> getNotActiveAdvents() {
+        return adventMap.values().stream().map(AdventConfig::getAdvent).filter(Advent::isNotActive).collect(Collectors.toList());
+    }
+
 
 }

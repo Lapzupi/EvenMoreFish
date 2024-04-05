@@ -158,7 +158,7 @@ public class FishingProcessor implements Listener {
         }
 
         if (BaitFile.getInstance().getBaitCatchPercentage() > 0) {
-            if (new Random().nextDouble() * 100.0 < BaitFile.getInstance().getBaitCatchPercentage()) {
+            if (EvenMoreFish.getInstance().getRandom().nextDouble() * 100.0 < BaitFile.getInstance().getBaitCatchPercentage()) {
                 Bait caughtBait = BaitNBTManager.randomBaitCatch();
                 Message message = new Message(ConfigMessage.BAIT_CAUGHT);
                 message.setBaitTheme(caughtBait.getTheme());

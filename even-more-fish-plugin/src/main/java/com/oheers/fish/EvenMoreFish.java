@@ -68,7 +68,6 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin, Listener {
     private Map<Integer, Set<String>> fish = new HashMap<>();
     private Map<String, Bait> baits = new HashMap<>();
     private Map<Rarity, List<Fish>> fishCollection = new HashMap<>();
-    private Rarity xmasRarity;
     private final Map<Integer, Fish> xmasFish = new HashMap<>();
     private List<UUID> disabledPlayers = new ArrayList<>();
     private ItemStack customNBTRod;
@@ -554,14 +553,6 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin, Listener {
 
     public Map<Rarity, List<Fish>> getFishCollection() {
         return fishCollection;
-    }
-
-    public Rarity getXmasRarity() {
-        return xmasRarity;
-    }
-
-    public void setXmasRarity(Rarity rarity) {
-        this.xmasRarity = rarity;
     }
 
     public Map<Integer, Fish> getXmasFish() {
