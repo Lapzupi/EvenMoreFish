@@ -55,7 +55,14 @@ public class AddonManager {
         if (!(addon instanceof ItemAddon)) {
             return new ItemStack(Material.AIR);
         }
+
         ItemAddon itemAddon = (ItemAddon) addon;
+
+        if (!itemAddon.loaded()) {
+            EvenMoreFish.debug(String.format("Dependant plugin %s not yet loaded. Returning default material", itemAddon.getPluginName()));
+            return new ItemStack(Material.COD);
+        }
+
         return itemAddon.getItemStack(id);
     }
 

@@ -22,7 +22,9 @@ public interface Addon {
      */
     String getPluginName();
 
-
+    default boolean loaded() {
+        return true;
+    }
     /**
      * Can this addon be registered.
      */

@@ -31,6 +31,11 @@ public class ItemsAdderItemAddon extends ItemAddon implements Listener {
     }
 
     @Override
+    public boolean loaded() {
+        return itemsAdderLoaded;
+    }
+
+    @Override
     public ItemStack getItemStack(String id) {
         if (!itemsAdderLoaded) {
             return null;
