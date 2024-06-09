@@ -58,6 +58,10 @@ dependencyResolutionManagement {
 
             library("acf", "co.aikar:acf-paper:0.5.1-SNAPSHOT")
             library("inventorygui", "de.themoep:inventorygui:1.6.1-SNAPSHOT")
+
+            plugin("shadow", "com.github.johnrengelman.shadow").version("8.1.1")
+            plugin("bukkit-yml","net.minecrell.plugin-yml.bukkit").version("0.6.0")
+            plugin("spotless", "com.diffplug.spotless").version("6.13.0") //Stuck on 6.13.0 until we upgrade to java 17
         }
     }
 }

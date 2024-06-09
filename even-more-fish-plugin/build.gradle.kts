@@ -1,8 +1,7 @@
 plugins {
-    `java-library`
-    id("maven-publish")
-    id("net.minecrell.plugin-yml.bukkit") version "0.6.0"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.oheers.evenmorefish.java-conventions")
+    alias(libs.plugins.bukkit.yml)
+    alias(libs.plugins.shadow)
 }
 
 group = "com.oheers.evenmorefish"
