@@ -1,7 +1,6 @@
 plugins {
     id("java-library")
     id("maven-publish")
-
 }
 
 repositories {
@@ -10,7 +9,6 @@ repositories {
     maven("https://repo.codemc.org/repository/maven-public/")
     maven("https://jitpack.io")
 }
-
 
 publishing {
     publications {

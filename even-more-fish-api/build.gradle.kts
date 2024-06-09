@@ -1,5 +1,6 @@
 plugins {
     id("com.oheers.evenmorefish.java-conventions")
+    alias(libs.plugins.spotless)
 }
 
 
@@ -14,5 +15,11 @@ java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(8))
         vendor.set(JvmVendorSpec.ADOPTIUM)
+    }
+}
+
+spotless {
+    java {
+        palantirJavaFormat()
     }
 }

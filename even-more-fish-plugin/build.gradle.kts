@@ -2,6 +2,7 @@ plugins {
     id("com.oheers.evenmorefish.java-conventions")
     alias(libs.plugins.bukkit.yml)
     alias(libs.plugins.shadow)
+    alias(libs.plugins.spotless)
 }
 
 group = "com.oheers.evenmorefish"
@@ -215,6 +216,11 @@ tasks {
     compileJava {
         options.compilerArgs.add("-parameters")
         options.isFork = true
+    }
+}
+spotless {
+    java {
+        palantirJavaFormat()
     }
 }
 
