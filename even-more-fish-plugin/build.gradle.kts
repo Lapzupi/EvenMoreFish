@@ -180,8 +180,7 @@ bukkit {
 
 tasks {
     build {
-        dependsOn(shadowJar)
-
+        dependsOn(spotlessCheck, shadowJar)
         doLast {
             val file = project.layout.buildDirectory.file("libs/even-more-fish-plugin-${version}.jar").get()
             file.asFile.delete()
@@ -220,7 +219,12 @@ tasks {
 }
 spotless {
     java {
-        palantirJavaFormat()
+        removeUnusedImports()
+        importOrder()
+
+        googleJavaFormat()
+
+        formatAnnotations()
     }
 }
 

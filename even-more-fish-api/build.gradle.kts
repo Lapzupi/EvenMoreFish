@@ -20,6 +20,11 @@ java {
 
 spotless {
     java {
-        palantirJavaFormat()
+        removeUnusedImports()
+        importOrder()
+
+        googleJavaFormat()
+
+        formatAnnotations()
     }
 }
