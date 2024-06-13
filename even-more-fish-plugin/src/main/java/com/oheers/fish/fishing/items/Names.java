@@ -159,33 +159,31 @@ public class Names {
     }
 
     private String rarityColour(String rarity) {
-        String colour = this.rarityConfiguration.getString("rarities." + rarity + ".colour");
-        if (colour == null) return "&f";
-        return colour;
+        return RaritiesFile.getInstance().getColour(rarity);
     }
 
     private double rarityWeight(String rarity) {
-        return this.rarityConfiguration.getDouble("rarities." + rarity + ".weight");
+        return RaritiesFile.getInstance().getWeight(rarity);
     }
 
     private boolean rarityAnnounce(String rarity) {
-        return this.rarityConfiguration.getBoolean("rarities." + rarity + ".broadcast");
+        return RaritiesFile.getInstance().isBroadcast(rarity);
     }
 
     private String rarityOverridenLore(String rarity) {
-        return this.rarityConfiguration.getString("rarities." + rarity + ".override-lore");
+        return RaritiesFile.getInstance().getOverridenLore(rarity);
     }
 
     private boolean rarityUseConfigCasing(String rarity) {
-        return this.rarityConfiguration.getBoolean("rarities." + rarity + ".use-this-casing");
+        return RaritiesFile.getInstance().isUseThisCasing(rarity);
     }
 
     private String rarityDisplayName(String rarity) {
-        return this.rarityConfiguration.getString("rarities." + rarity + ".displayname");
+        return RaritiesFile.getInstance().getDisplayName(rarity);
     }
 
     private String rarityPermission(String rarity) {
-        return this.rarityConfiguration.getString("rarities." + rarity + ".permission");
+        return RaritiesFile.getInstance().getPermission(rarity);
     }
 
     private List<Requirement> getRequirements(String name, String rarity, FileConfiguration config) {
