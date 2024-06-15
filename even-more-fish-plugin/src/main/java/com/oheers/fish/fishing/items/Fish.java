@@ -73,8 +73,8 @@ public class Fish implements Cloneable {
         this.length = -1F;
         this.xmasFish = isXmas2022Fish;
         this.setFishAndRarityConfig();
-        final boolean defaultRarityDisableFisherman = RaritiesFile.getInstance().getConfig().getBoolean("rarities." + this.rarity.getValue() + ".disable-fisherman", false);
-        this.disableFisherman = this.fishConfig.getBoolean("fish." + this.rarity.getValue() + "." + this.name + ".disable-fisherman", defaultRarityDisableFisherman);
+        final boolean defaultRarityDisableFisherman = RaritiesFile.getInstance().isDisableFisherman(rarity.getValue());
+        this.disableFisherman = FishFile.getInstance().isDisableFisherman(rarity.getValue(), name, defaultRarityDisableFisherman);
 
         this.factory = new ItemFactory("fish." + this.rarity.getValue() + "." + this.name, this.xmasFish);
         checkDisplayName();
@@ -82,12 +82,11 @@ public class Fish implements Cloneable {
         // These settings don't mean these will be applied, but they will be considered if the settings exist.
         factory.enableDefaultChecks();
         factory.setItemDisplayNameCheck(this.displayName != null);
-        factory.setItemLoreCheck(!this.fishConfig.getBoolean("fish." + this.rarity.getValue() + "." + this.name + ".disable-lore", false));
+        factory.setItemLoreCheck(!FishFile.getInstance().isDisableLore(rarity.getValue(), name));
 
         setSize();
         checkEatEvent();
         checkIntEvent();
-        checkDisplayName();
         checkSilent();
 
         checkFishEvent();
@@ -149,13 +148,13 @@ public class Fish implements Cloneable {
     }
 
     private void setSize() {
-        this.minSize = this.fishConfig.getDouble("fish." + this.rarity.getValue() + "." + this.name + ".size.minSize");
-        this.maxSize = this.fishConfig.getDouble("fish." + this.rarity.getValue() + "." + this.name + ".size.maxSize");
+        this.minSize = FishFile.getInstance().getMinSize(this.rarity.getValue(), this.name);
+        this.maxSize = FishFile.getInstance().getMaxSize(this.rarity.getValue(), this.name);
 
         // are min & max size changed? If not, there's no fish-specific value. Check the rarity's value
         if (minSize == 0.0 && maxSize == 0.0) {
-            this.minSize = this.rarityConfig.getDouble("rarities." + this.rarity.getValue() + ".size.minSize");
-            this.maxSize = this.rarityConfig.getDouble("rarities." + this.rarity.getValue() + ".size.maxSize");
+            this.minSize = RaritiesFile.getInstance().getMinSize(this.rarity.getValue());
+            this.maxSize = RaritiesFile.getInstance().getMaxSize(this.rarity.getValue());
         }
 
         // If there's no rarity-specific value (or max is smaller than min), to avoid being in a pickle we just set min default to 0 and max default to 10
@@ -170,7 +169,7 @@ public class Fish implements Cloneable {
             this.length = -1f;
         } else {
             // Random logic that returns a float to 1dp
-            int len = (int) (Math.random() * (maxSize * 10 - minSize * 10 + 1) + minSize * 10);
+            int len = (int) (EvenMoreFish.getInstance().getRandom().nextInt() * (maxSize * 10 - minSize * 10 + 1) + minSize * 10);
             this.length = (float) len / 10;
         }
     }
@@ -197,7 +196,7 @@ public class Fish implements Cloneable {
 
     // checks if the config contains a message to be displayed when the fish is fished
     private void checkMessage() {
-        String msg = this.fishConfig.getString("fish." + this.rarity.getValue() + "." + this.name + ".message");
+        String msg = FishFile.getInstance().getMessage(this.rarity.getValue(), this.name);
 
         if (msg != null) {
             if (Bukkit.getPlayer(fisherman) != null) {
@@ -208,7 +207,7 @@ public class Fish implements Cloneable {
 
     private void checkEffects() {
 
-        String effectConfig = this.fishConfig.getString("fish." + this.rarity.getValue() + "." + this.name + ".effect");
+        String effectConfig = FishFile.getInstance().getEffect(this.rarity.getValue(), this.name);
 
         // if the config doesn't have an effect stated to be given
         if (effectConfig == null) return;
@@ -294,11 +293,11 @@ public class Fish implements Cloneable {
     }
 
     public void checkDisplayName() {
-        this.displayName = this.fishConfig.getString("fish." + this.rarity.getValue() + "." + this.name + ".displayname");
+        this.displayName = FishFile.getInstance().getDisplayName(rarity.getValue(),this.name);
     }
 
     public void checkEatEvent() {
-        List<String> configRewards = this.fishConfig.getStringList("fish." + this.rarity.getValue() + "." + this.name + ".eat-event");
+        List<String> configRewards = FishFile.getInstance().getEatEvent(rarity.getValue(), this.name);
         // Checks if the player has actually set rewards for an eat event
         if (!configRewards.isEmpty()) {
             // Informs the main class to load up an PlayerItemConsumeEvent listener
@@ -316,7 +315,7 @@ public class Fish implements Cloneable {
 
     public void checkFishEvent() {
         fishRewards = new ArrayList<>();
-        List<String> configRewards = this.fishConfig.getStringList("fish." + this.rarity.getValue() + "." + this.name + ".catch-event");
+        List<String> configRewards = FishFile.getInstance().getCatchEvent(rarity.getValue(),this.name);
         if (!configRewards.isEmpty()) {
             // Translates all the rewards into Reward objects and adds them to the fish.
             configRewards.forEach(reward -> {
@@ -328,7 +327,7 @@ public class Fish implements Cloneable {
 
     public void checkSellEvent() {
         sellRewards = new ArrayList<>();
-        List<String> configRewards = this.fishConfig.getStringList("fish." + this.rarity.getValue() + "." + this.name + ".sell-event");
+        List<String> configRewards = FishFile.getInstance().getSellEvent(rarity.getValue(),this.name);
         if (!configRewards.isEmpty())  {
             configRewards.forEach(reward -> {
                 reward = parseEventPlaceholders(reward);
@@ -338,7 +337,7 @@ public class Fish implements Cloneable {
     }
 
     public void checkIntEvent() {
-        List<String> configRewards = this.fishConfig.getStringList("fish." + this.rarity.getValue() + "." + this.name + ".interact-event");
+        List<String> configRewards = FishFile.getInstance().getInteractEvent(rarity.getValue(),this.name);
         // Checks if the player has actually set rewards for an interact event
         if (!configRewards.isEmpty()) {
             // Informs the main class to load up an PlayerItemConsumeEvent listener
@@ -358,7 +357,7 @@ public class Fish implements Cloneable {
      * Checks if the fish has silent: true enabled, which stops the "You caught ... fish" from being broadcasted to anyone.
      */
     public void checkSilent() {
-        this.silent = this.fishConfig.getBoolean("fish." + this.rarity.getValue() + "." + this.name + ".silent", false);
+        this.silent = FishFile.getInstance().isSilent(rarity.getValue(), this.name);
     }
 
     @Override

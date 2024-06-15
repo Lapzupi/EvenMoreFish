@@ -2,10 +2,7 @@ package com.oheers.fish.utils;
 
 import com.oheers.fish.EvenMoreFish;
 import com.oheers.fish.FishUtils;
-import com.oheers.fish.config.BaitFile;
-import com.oheers.fish.config.FishFile;
-import com.oheers.fish.config.MainConfig;
-import com.oheers.fish.config.Xmas2022Config;
+import com.oheers.fish.config.*;
 import com.oheers.fish.config.messages.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -603,6 +600,8 @@ public class ItemFactory {
         }
     }
 
+
+    //todo this is dumb
     private FileConfiguration getConfiguration() {
         if (this.xmas2022Item) return Xmas2022Config.getInstance().getConfig();
 

@@ -64,5 +64,4 @@ public class RaritiesFile extends ConfigBase {
         return getRaritiesSection().getDouble(rarityName + ".weight");
     }
 
-    //isDisabled Requirement?
 }
