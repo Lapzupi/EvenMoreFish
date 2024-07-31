@@ -85,6 +85,19 @@ sell-gui:
   # Should the items be dropped(false) or sold(true) when a player exits an inventory?
   sell-over-drop: false
 
+# Should vanilla fish be sold or not?
+# Note: For this to work, the fish must not have any additional nbt data.
+sell-vanilla:
+  enabled: false
+  # Size to sell vanilla fish.
+  size: 1
+  # Material:Rarity
+  fish:
+    - "raw_cod:Common"
+    - "raw_salmon:Common"
+    - "pufferfish:Common"
+    - "tropical_fish:Common"
+
 # Uncomment the below section to enable these feature. They sett the plugin to only give custom fish when users are
 # in a list of set defined regions (this requires the worldguard/redprotect plugin) and/or in a list of set defined
 # worlds. EvenMoreFish automatically detects your protection plugin so it's important you don't run both at once.
@@ -127,4 +140,4 @@ command:
 
 # ATTENTION ATTENTION ATTENTION
 # DO NOT EDIT THIS VALUE OR THINGS WILL BREAK!!!
-config-version: 1
+config-version: "3"

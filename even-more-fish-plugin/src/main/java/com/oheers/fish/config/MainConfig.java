@@ -2,8 +2,12 @@ package com.oheers.fish.config;
 
 import com.oheers.fish.Economy;
 import com.oheers.fish.EvenMoreFish;
+import dev.dejvokep.boostedyaml.route.Route;
+import org.bukkit.Material;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 public class MainConfig extends ConfigBase {
 
@@ -190,6 +194,23 @@ public class MainConfig extends ConfigBase {
 
     public List<String> getMainCommandAliases() {
         return getConfig().getStringList("command.aliases");
+    }
+
+    public boolean isVanillaSelling() {
+        return getConfig().getBoolean(Route.from("sell-vanilla", "enabled"), false);
+    }
+
+    public Float getVanillaSize() {
+        return getConfig().getFloat(Route.from("sell-vanilla", "size"), 1f);
+    }
+
+    public String getVanillaRarity(final Material material) {
+        for (String string: getConfig().getStringList(Route.from("sell-vanilla", "fish"), Collections.emptyList())) {
+            if (string.startsWith(material.name().toLowerCase())) {
+                return string.split(":")[1];
+            }
+        }
+        return null;
     }
 
 }

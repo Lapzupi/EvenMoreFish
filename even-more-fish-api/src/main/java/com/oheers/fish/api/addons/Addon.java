@@ -51,4 +51,5 @@ public interface Addon {
         return Logger.getLogger("EvenMoreFish:" + getPrefix());
     }
 
+
 }

@@ -13,6 +13,9 @@ import com.oheers.fish.utils.nbt.NbtKeys;
 import com.oheers.fish.utils.nbt.NbtUtils;
 import de.themoep.inventorygui.GuiStorageElement;
 import de.themoep.inventorygui.InventoryGui;
+import de.tr7zw.changeme.nbtapi.NBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableItemNBT;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -27,6 +30,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
+
+import static com.oheers.fish.selling.WorthNBT.getMultipliedValue;
 
 public class SellHelper {
 
@@ -104,10 +110,31 @@ public class SellHelper {
         return soldFish;
     }
 
+    /**
+     * Retrieves the SoldFish object from the given ItemStack.
+     * <p>
+     * This method checks if the ItemStack represents a fish that has been sold. It first checks if the item has a specific value
+     * using WorthNBT. If the value is -1.0, it further checks if the item is a vanilla fish and if vanilla fish selling is enabled.
+     * If so, it retrieves the fish details from the item metadata, and from the config file.
+     * If the item has a valid value, it retrieves the fish details from NBT tags.
+     *
+     * @param item The ItemStack to check for sold fish details.
+     * @return A SoldFish object if the item represents a sold fish, otherwise null.
+     */
     private @Nullable SoldFish getSoldFish(final ItemStack item) {
         double itemValue = WorthNBT.getValue(item);
         if (itemValue == -1.0) {
-            return null;
+            if (!isVanillaFish(item) || !MainConfig.getInstance().isVanillaSelling()) {
+                EvenMoreFish.getInstance().getLogger().info(() -> "VANILLA SELLING: " + MainConfig.getInstance().isVanillaSelling());
+                EvenMoreFish.getInstance().getLogger().info(() -> "TRIED SELLING: " + item.toString());
+                return null;
+            }
+
+            final String fishName = item.getItemMeta().getDisplayName();
+            final String fishRarity = MainConfig.getInstance().getVanillaRarity(item.getType());
+            final Float size = MainConfig.getInstance().getVanillaSize();
+
+            return new SoldFish(fishName, fishRarity, item.getAmount(), getMultipliedValue(size, fishRarity, fishName), size);
         }
 
         final String fishName = NbtUtils.getString(item, NbtKeys.EMF_FISH_NAME);
@@ -117,6 +144,25 @@ public class SellHelper {
         final double fishValue = WorthNBT.getValue(item);
 
         return new SoldFish(fishName, fishRarity, item.getAmount(), fishValue * item.getAmount(), fishLength);
+    }
+
+    /**
+     * Checks if the given ItemStack represents a vanilla fish.
+     * <p>
+     * This method checks if the ItemStack is of a type that represents a vanilla fish (e.g., COD, TROPICAL_FISH, SALMON, PUFFERFISH)
+     * and ensures that the item does not have NBT data indicating it is not a vanilla fish.
+     *
+     * @param item The ItemStack to check.
+     * @return True if the item is a vanilla fish without NBT data, otherwise false.
+     */
+    private boolean isVanillaFish(final ItemStack item) {
+        if (item == null) return false;
+
+        final Material potentialFish = item.getType();
+        return switch (potentialFish) {
+            case COD, TROPICAL_FISH, SALMON, PUFFERFISH -> !NBT.get(item, ReadableItemNBT::hasNBTData);
+            default -> false;
+        };
     }
 
     public double getTotalWorth(final List<SoldFish> soldFish) {

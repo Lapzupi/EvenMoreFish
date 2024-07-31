@@ -44,7 +44,7 @@ public class ConfigBase {
             return;
         }
 
-        List<Settings> settingsList = new ArrayList<>(Arrays.asList(
+        List<Settings> settingsList = new ArrayList<>(List.of(
                 GeneralSettings.DEFAULT,
                 DumperSettings.DEFAULT
         ));
@@ -52,6 +52,9 @@ public class ConfigBase {
         if (configUpdater) {
             settingsList.add(LoaderSettings.builder().setAutoUpdate(true).build());
             settingsList.add(UpdaterSettings.builder().setVersioning(new BasicVersioning("config-version")).build());
+        } else {
+            settingsList.add(LoaderSettings.DEFAULT);
+            settingsList.add(UpdaterSettings.DEFAULT);
         }
 
         final Settings[] settings = settingsList.toArray(new Settings[0]);

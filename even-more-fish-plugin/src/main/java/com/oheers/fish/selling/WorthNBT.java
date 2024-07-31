@@ -94,7 +94,7 @@ public class WorthNBT {
         return NbtUtils.hasKey(is, NbtKeys.DEFAULT_GUI_ITEM);
     }
 
-    private static double getMultipliedValue(Float length, String rarity, String name) {
+    public static double getMultipliedValue(Float length, String rarity, String name) {
         double worthMultiplier = getWorthMultiplier(rarity, name);
         double value = multipleWorthByLength(worthMultiplier, length);
         return sortFunkyDecimals(value);
