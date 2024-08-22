@@ -516,7 +516,7 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin {
         itemFactory.setItemLoreCheck(true);
 
         ItemStack customRod = itemFactory.createItem(null, 0);
-        NBT.modify(customRod,nbt -> {
+        NBT.modify(customRod, nbt -> {
             nbt.getOrCreateCompound(NbtKeys.EMF_COMPOUND).setBoolean(NbtKeys.EMF_ROD_NBT,true);
         });
         return customRod;
@@ -803,13 +803,13 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin {
         if (Bukkit.getPluginManager().isPluginEnabled("Essentials")) {
             Plugin plugin = Bukkit.getPluginManager().getPlugin("Essentials");
             if (plugin instanceof Essentials essentials) {
-                players = players.stream().filter(player -> !essentials.getUser(player).isVanished()).collect(Collectors.toList());
+                players = players.stream().filter(player -> !essentials.getUser(player).isVanished()).toList();
             }
         }
 
         // Check CMI
         if (Bukkit.getPluginManager().isPluginEnabled("CMI")) {
-            players = players.stream().filter(player -> !CMIUser.getUser(player).isVanished()).collect(Collectors.toList());
+            players = players.stream().filter(player -> !CMIUser.getUser(player).isVanished()).toList();
         }
 
         // Metadata check - A more generic way of checking if a player is vanished.
@@ -821,7 +821,7 @@ public class EvenMoreFish extends JavaPlugin implements EMFPlugin {
                 }
             }
             return true;
-        }).collect(Collectors.toList());
+        }).toList();
 
         return players;
     }

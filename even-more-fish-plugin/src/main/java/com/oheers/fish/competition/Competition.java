@@ -38,7 +38,6 @@ public class Competition {
     public int numberNeeded;
     public String competitionName;
     public boolean adminStarted;
-    public String competitionID;
     public Message startMessage;
     long maxDuration, timeLeft;
     Bar statusBar;
@@ -431,8 +430,7 @@ public class Competition {
                 message.setPlayer(Bukkit.getOfflinePlayer(entry.getPlayer()).getName());
                 message.setPosition(Integer.toString(pos));
                 if (pos > competitionColours.size()) {
-                    Random r = EvenMoreFish.getInstance().getRandom();
-                    int s = r.nextInt(3);
+                    int s = EvenMoreFish.getInstance().getRandom().nextInt(3);
                     switch (s) {
                         case 0 -> message.setPositionColour("&c» &r");
                         case 1 -> message.setPositionColour("&c_ &r");
@@ -525,8 +523,6 @@ public class Competition {
         Message message = new Message(ConfigMessage.LEADERBOARD_TOTAL_PLAYERS);
         message.setAmount(Integer.toString(leaderboard.getSize()));
         message.broadcast(player, true);
-
-
     }
 
     public void sendConsoleLeaderboard(ConsoleCommandSender console) {
@@ -597,8 +593,6 @@ public class Competition {
         Message message = new Message(ConfigMessage.LEADERBOARD_TOTAL_PLAYERS);
         message.setAmount(Integer.toString(leaderboard.getSize()));
         message.broadcast(console, true);
-
-
     }
 
     public boolean chooseFish(String competitionName, boolean adminStart) {
@@ -671,7 +665,7 @@ public class Competition {
         setNumberNeeded(CompetitionConfig.getInstance().getNumberFishNeeded(competitionName, adminStart));
 
         try {
-            String randomRarity = configRarities.get(new Random().nextInt(configRarities.size()));
+            String randomRarity = configRarities.get(EvenMoreFish.getInstance().getRandom().nextInt(configRarities.size()));
             for (Rarity r : EvenMoreFish.getInstance().getFishCollection().keySet()) {
                 if (r.getValue().equalsIgnoreCase(randomRarity)) {
                     this.selectedRarity = r;
@@ -740,6 +734,22 @@ public class Competition {
         });
     }
 
+    private boolean participationRewardsExists() {
+        return participationRewards != null && !participationRewards.isEmpty();
+    }
+
+    private void updateUserReport(final boolean databaseEnabled) {
+        CompetitionEntry topEntry = leaderboard.getTopEntry();
+        if (topEntry != null && databaseEnabled) {
+            UserReport topReport = DataManager.getInstance().getUserReportIfExists(topEntry.getPlayer());
+            if (topReport == null) {
+                EvenMoreFish.getInstance().getLogger().severe("Could not fetch User Report for " + topEntry.getPlayer() + ", their data has not been modified.");
+            } else {
+                topReport.incrementCompetitionsWon(1);
+            }
+        }
+    }
+
     private void handleRewards() {
         if (leaderboard.getSize() == 0) {
             if (!((competitionType == CompetitionType.SPECIFIC_FISH || competitionType == CompetitionType.SPECIFIC_RARITY) && numberNeeded == 1)) {
@@ -750,17 +760,7 @@ public class Competition {
 
         boolean databaseEnabled = MainConfig.getInstance().databaseEnabled();
         int rewardPlace = 1;
-        CompetitionEntry topEntry = leaderboard.getTopEntry();
-        if (topEntry != null && databaseEnabled) {
-            UserReport topReport = DataManager.getInstance().getUserReportIfExists(topEntry.getPlayer());
-            if (topReport == null) {
-                EvenMoreFish.getInstance().getLogger().severe("Could not fetch User Report for " + topEntry.getPlayer() + ", their data has not been modified.");
-            } else {
-                topReport.incrementCompetitionsWon(1);
-            }
-        }
-
-        boolean participationRewardsExist = (participationRewards != null && !participationRewards.isEmpty());
+        updateUserReport(databaseEnabled);
 
         for (CompetitionEntry entry : leaderboard.getEntries()) {
 
@@ -777,7 +777,7 @@ public class Competition {
                 rewards.get(rewardPlace).forEach(reward -> reward.rewardPlayer(player, null));
             // Default to participation rewards if not.
             } else {
-                if (participationRewardsExist) {
+                if (participationRewardsExists()) {
                     participationRewards.forEach(reward -> reward.rewardPlayer(player, null));
                 }
             }
