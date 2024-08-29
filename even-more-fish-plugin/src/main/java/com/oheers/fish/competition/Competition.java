@@ -364,7 +364,7 @@ public class Competition {
             } else {
                 CompetitionEntry newEntry = new CompetitionEntry(fisher.getUniqueId(), fish, competitionType);
 
-                if (leaderboard.getSize() != 0) {
+                if (leaderboard.isNotEmpty()) {
                     if (fish.getLength() > leaderboard.getTopEntry().getFish().getLength() && leaderboard.getTopEntry().getPlayer() != fisher.getUniqueId()) {
                         Message message = new Message(ConfigMessage.NEW_FIRST_PLACE_NOTIFICATION);
                         message.setLength(Float.toString(fish.getLength()));

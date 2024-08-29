@@ -35,6 +35,10 @@ interface LeaderboardHandler {
 
     Fish getPlaceFish(int i);
 
+    boolean isEmpty();
+
+    boolean isNotEmpty();
+
 }
 
 public class Leaderboard implements LeaderboardHandler {
@@ -87,6 +91,16 @@ public class Leaderboard implements LeaderboardHandler {
     @Override
     public int getSize() {
         return entries.size();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return getSize() == 0;
+    }
+
+    @Override
+    public boolean isNotEmpty() {
+        return !isEmpty();
     }
 
     @Override
