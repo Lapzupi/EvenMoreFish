@@ -3,6 +3,7 @@ package com.oheers.fish.utils.nbt;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableItemNBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadableNBT;
+import de.tr7zw.changeme.nbtapi.iface.ReadableNBTList;
 import org.bukkit.NamespacedKey;
 import org.bukkit.block.BlockState;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class NbtUtils {
     private NbtUtils() {
@@ -74,6 +79,20 @@ public class NbtUtils {
         return NBT.get(item, nbt -> {
             return getNbtString(namespacedKey, nbtVersion, nbt);
         });
+    }
+
+    public static List<String> getStringListOrStringBait(final ItemStack item) {
+        return NBT.get(item, nbt -> {
+            final ReadableNBTList<String> potentialBaitList = nbt.getStringList(NbtKeys.EMF_APPLIED_BAIT);
+            if (potentialBaitList.isEmpty()) {
+                final String appliedBait = nbt.getString(NbtKeys.EMF_APPLIED_BAIT);
+                if (appliedBait == null) {
+                    return Collections.<String>emptyList();
+                }
+                return List.of(appliedBait.split(","));
+            }
+        }
+        );
     }
 
     public static String[] getBaitArray(final ItemStack item) {
