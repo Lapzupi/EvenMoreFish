@@ -148,6 +148,7 @@ public class BaitNBTManager {
                 final String[] splitBaitName = baitName.split(":");
                 final String potentialBaitName = splitBaitName[0];
                 if (potentialBaitName.equals(bait.getName())) {
+                    //todo, i feel like this is here twice
                     final int currentQuantity = Integer.parseInt(splitBaitName[1]);
                     final int newQuantity = currentQuantity + quantity;
 
@@ -178,8 +179,8 @@ public class BaitNBTManager {
                     }
                     throw new MaxBaitsReachedException("Max baits reached.", new ApplicationResult(item, cursorModifier.get()));
                 }
-
-                if (quantity > bait.getMaxApplications() && bait.getMaxApplications() != -1) {
+                //todo, i feel like this is here twice
+                if (isMaxBait(quantity,bait)) {
                     cursorModifier.set(-bait.getMaxApplications());
                     combined.append(bait.getName()).append(":").append(bait.getMaxApplications());
                     maxBait.set(true);
@@ -203,7 +204,7 @@ public class BaitNBTManager {
         } else {
             NBT.modify(item, nbt -> {
                 ReadWriteNBT compound = nbt.getOrCreateCompound(NbtKeys.EMF_COMPOUND);
-                if (quantity > bait.getMaxApplications() && bait.getMaxApplications() != -1) {
+                if (isMaxBait(quantity, bait)) {
                     combined.append(bait.getName()).append(":").append(bait.getMaxApplications());
                     compound.setString(NbtKeys.EMF_APPLIED_BAIT, combined.toString());
                     cursorModifier.set(-bait.getMaxApplications());
@@ -227,6 +228,10 @@ public class BaitNBTManager {
         }
 
         return new ApplicationResult(item, cursorModifier.get());
+    }
+
+    private static boolean isMaxBait(final int quantity, final Bait bait) {
+        return quantity > bait.getMaxApplications() && bait.getMaxApplications() != -1;
     }
 
     private static List<Bait> getExistingBaitsFromRod(final ItemStack fishingRod) {
