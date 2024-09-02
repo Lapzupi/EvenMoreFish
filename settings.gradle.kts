@@ -81,6 +81,14 @@ dependencyResolutionManagement {
 
             plugin("grgit", "org.ajoberstar.grgit").version("5.2.2")
 
+
+            version("rng", "1.6")
+            library("rng-api", "org.apache.commons", "commons-rng-client-api").versionRef("rng")
+            library("rng-core", "org.apache.commons","commons-rng-core").versionRef("rng")
+            library("rng-simple", "org.apache.commons", "commons-rng-simple").versionRef("rng")
+            library("rng-sampling", "org.apache.commons", "commons-rng-sampling").versionRef("rng")
+            bundle("rng", listOf("rng-api", "rng-core", "rng-simple", "rng-sampling"))
+
         }
     }
 }

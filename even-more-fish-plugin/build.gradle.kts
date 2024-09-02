@@ -98,6 +98,8 @@ dependencies {
     library(libs.commons.codec)
 
     library(libs.json.simple)
+
+    library(libs.bundles.rng)
 }
 
 bukkit {

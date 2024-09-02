@@ -10,18 +10,30 @@ import com.oheers.fish.utils.nbt.NbtKeys;
 import com.oheers.fish.utils.nbt.NbtUtils;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
+import org.apache.commons.rng.sampling.CollectionSampler;
+import org.apache.commons.rng.sampling.DiscreteProbabilityCollectionSampler;
+import org.apache.commons.rng.simple.RandomSource;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
+/**
+ * FIXME
+ * The bait is handled by nbt.
+ * The lore should be checked when a bait is used or when a bait is applied.
+ * A change in the format shouldn't impact the lore, perhaps we cache the older format:
+ *  user has a format
+ *  user changes to b format, a format is cached.
+ *  plugin tried to apply b format, error, tries to get a format and apply new b format.?
+ * Maybe set the bait lore in specific lines?
+ */
 public class BaitNBTManager {
     private BaitNBTManager() {
         throw new UnsupportedOperationException();
@@ -64,10 +76,12 @@ public class BaitNBTManager {
      * @param item The item stack being turned into a bait.
      * @param bait The name of the bait to be applied.
      */
+    //todo, NBT.modify directly modifies the itemstack, there shouldn't be a need to return it..
     public static ItemStack applyBaitNBT(ItemStack item, String bait) {
         if (item == null) {
             return null;
         }
+
         NBT.modify(item, nbt -> {
             nbt.getOrCreateCompound(NbtKeys.EMF_COMPOUND).setString(NbtKeys.EMF_BAIT, bait);
         });
@@ -129,18 +143,21 @@ public class BaitNBTManager {
             String[] baitList = NbtUtils.getBaitArray(item);
 
             boolean foundBait = false;
-
+            //baitName = "name:quantity"
             for (String baitName : baitList) {
-                if (baitName.split(":")[0].equals(bait.getName())) {
-                    int newQuantity = Integer.parseInt(baitName.split(":")[1]) + quantity;
+                final String[] splitBaitName = baitName.split(":");
+                final String potentialBaitName = splitBaitName[0];
+                if (potentialBaitName.equals(bait.getName())) {
+                    final int currentQuantity = Integer.parseInt(splitBaitName[1]);
+                    final int newQuantity = currentQuantity + quantity;
 
                     if (newQuantity > bait.getMaxApplications() && bait.getMaxApplications() != -1) {
-                        combined.append(baitName.split(":")[0]).append(":").append(bait.getMaxApplications()).append(",");
+                        combined.append(potentialBaitName).append(":").append(bait.getMaxApplications()).append(",");
                         // new cursor amt = -(max app - old app)
                         cursorModifier.set(-bait.getMaxApplications() + (newQuantity - quantity));
                         maxBait.set(true);
                     } else if (newQuantity != 0) {
-                        combined.append(baitName.split(":")[0]).append(":").append(Integer.parseInt(baitName.split(":")[1]) + quantity).append(",");
+                        combined.append(potentialBaitName).append(":").append(currentQuantity + quantity).append(",");
                         cursorModifier.set(-quantity);
                     }
                     foundBait = true;
@@ -212,6 +229,20 @@ public class BaitNBTManager {
         return new ApplicationResult(item, cursorModifier.get());
     }
 
+    private static List<Bait> getExistingBaitsFromRod(final ItemStack fishingRod) {
+        final List<Bait> baits = new ArrayList<>();
+        String[] baitNameList = NbtUtils.getBaitArray(fishingRod);
+        for (String baitName : baitNameList) {
+            final String[] splitBaitName = baitName.split(":");
+            final Bait bait = EvenMoreFish.getInstance().getBaits().get(splitBaitName[0]);
+            if (bait != null) {
+                baits.add(bait);
+            }
+        }
+
+        return baits;
+    }
+
     /**
      * This fetches a random bait applied to the rod, based on the application-weight of the baits (if they exist). The
      * weight defaults to "1" if there is no value applied for them.
@@ -224,34 +255,13 @@ public class BaitNBTManager {
             return null;
         }
 
-        String[] baitNameList = NbtUtils.getBaitArray(fishingRod);
-        List<Bait> baitList = new ArrayList<>();
 
-        for (String baitName : baitNameList) {
-
-            Bait bait;
-            if ((bait = EvenMoreFish.getInstance().getBaits().get(baitName.split(":")[0])) != null) {
-                baitList.add(bait);
-            }
-
-        }
-
-        double totalWeight = 0;
-
-        // Weighted random logic (nabbed from stackoverflow)
-        for (Bait bait : baitList) {
-            totalWeight += (bait.getApplicationWeight());
-        }
-
-        int idx = 0;
-        for (double r = Math.random() * totalWeight; idx < baitList.size() - 1; ++idx) {
-            r -= baitList.get(idx).getApplicationWeight();
-            if (r <= 0.0) {
-                break;
-            }
-        }
-
-        return baitList.get(idx);
+        return getRandomBait(
+                getExistingBaitsFromRod(fishingRod).stream().collect(Collectors.toMap(
+                        bait -> bait,
+                        bait -> bait.applicationWeight
+                ))
+        );
     }
 
     /**
@@ -261,24 +271,12 @@ public class BaitNBTManager {
      * @return A random bait weighted by its catch-weight.
      */
     public static Bait randomBaitCatch() {
-        double totalWeight = 0;
-
-        List<Bait> baitList = new ArrayList<>(EvenMoreFish.getInstance().getBaits().values());
-
-        // Weighted random logic (nabbed from stackoverflow)
-        for (Bait bait : baitList) {
-            totalWeight += (bait.getCatchWeight());
-        }
-
-        int idx = 0;
-        for (double r = Math.random() * totalWeight; idx < EvenMoreFish.getInstance().getBaits().size() - 1; ++idx) {
-            r -= baitList.get(idx).getCatchWeight();
-            if (r <= 0.0) {
-                break;
-            }
-        }
-
-        return baitList.get(idx);
+        return getRandomBait(
+                EvenMoreFish.getInstance().getBaits().values().stream().collect(Collectors.toMap(
+                        bait -> bait,
+                        bait -> bait.catchWeight
+                ))
+        );
     }
 
     /**
@@ -396,21 +394,33 @@ public class BaitNBTManager {
             return Collections.emptyList();
         }
 
+        //todo bug here:
+        /*
+        This should be done while referencing the format.
+        It will check each line if it matches the format, and if it does, only then it will erase.
+         */
         if (BaitFile.getInstance().showUnusedBaitSlots()) {
             // starting at 1, because at least one bait replacing {baits} is repeated.
             int maxBaits = BaitFile.getInstance().getMaxBaits() + BaitFile.getInstance().getRodLoreFormat().size();
             //todo, to help this be compliant with java:S5413, we should iterate in reverse order, this should be done in another pr, left here for reference
             //compliant version
-            for (int i = 1; i < maxBaits; i++) {
-                lore.remove(lore.size() - 1);
+            if (lore.size() > maxBaits) {
+                lore.subList(maxBaits, lore.size()).clear();
             }
+
+            //            for (int i = 1; i < maxBaits; i++) {
+            //                lore.remove(lore.size() - 1);
+            //            }
         } else {
             // starting at 1, because at least one bait replacing {baits} is repeated.
             int numBaitsApplied = getNumBaitsApplied(itemStack) + BaitFile.getInstance().getRodLoreFormat().size();
             //compliant version
-            for (int i = 1; i < numBaitsApplied; i++) {
-                lore.remove(lore.size() - 1);
+            if (lore.size() > numBaitsApplied) {
+                lore.subList(numBaitsApplied, lore.size()).clear();
             }
+            //            for (int i = 1; i < numBaitsApplied; i++) {
+            //                lore.remove(lore.size() - 1);
+            //            }
         }
 
         return lore;
@@ -441,5 +451,16 @@ public class BaitNBTManager {
     private static String getBaitFormatted(String baitID) {
         Bait bait = EvenMoreFish.getInstance().getBaits().get(baitID);
         return FishUtils.translateColorCodes(bait.getDisplayName());
+    }
+
+    private static Bait getRandomBait(final Map<Bait, Double> weights) {
+        if (new HashSet<>(weights.values()).size() == 1) {
+            //when everything is equal chance...
+            CollectionSampler<Bait> sampler = new CollectionSampler<>(RandomSource.MWC_256.create(), weights.keySet());
+            return sampler.sample();
+        }
+
+        DiscreteProbabilityCollectionSampler<Bait> sampler = new DiscreteProbabilityCollectionSampler<>(RandomSource.MWC_256.create(), weights);
+        return sampler.sample();
     }
 }
