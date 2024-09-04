@@ -195,6 +195,14 @@ public class BaitNBTManager {
             }
             NBT.modify(item, nbt -> {
                 ReadWriteNBT emfCompound = nbt.getOrCreateCompound(NbtKeys.EMF_COMPOUND);
+                /*
+                TODO
+                Currently we set baits with emf-applied-bait: "baitname:quanity,baitname2:quantity"
+                Instead we should use a list:
+                    "emf-applied-bait":
+                        - "baitname:quantity"
+                        - "baitname2:quantity"
+                 */
                 if (!combined.isEmpty()) {
                     emfCompound.setString(NbtKeys.EMF_APPLIED_BAIT, combined.toString());
                 } else {
@@ -236,8 +244,7 @@ public class BaitNBTManager {
 
     private static List<Bait> getExistingBaitsFromRod(final ItemStack fishingRod) {
         final List<Bait> baits = new ArrayList<>();
-        String[] baitNameList = NbtUtils.getBaitArray(fishingRod);
-        for (String baitName : baitNameList) {
+        for (String baitName : NbtUtils.getStringListOrStringBait(fishingRod)) {
             final String[] splitBaitName = baitName.split(":");
             final Bait bait = EvenMoreFish.getInstance().getBaits().get(splitBaitName[0]);
             if (bait != null) {
@@ -323,8 +330,7 @@ public class BaitNBTManager {
         }
 
         int totalDeleted = 0;
-        String[] baitList = NbtUtils.getBaitArray(itemStack);
-        for (String appliedBait : baitList) {
+        for (String appliedBait : NbtUtils.getStringListOrStringBait(itemStack)) {
             totalDeleted += Integer.parseInt(appliedBait.split(":")[1]);
         }
         NBT.modify(itemStack, nbt -> {
@@ -339,6 +345,7 @@ public class BaitNBTManager {
         if (itemStack.getItemMeta() == null) {
             return Collections.emptyList();
         }
+
         ItemMeta meta = itemStack.getItemMeta();
 
         List<String> lore = meta.getLore();
@@ -349,32 +356,40 @@ public class BaitNBTManager {
         List<String> format = BaitFile.getInstance().getRodLoreFormat();
         for (String lineAddition : format) {
             if (lineAddition.equals("{baits}")) {
-                String rodNBT = NbtUtils.getString(itemStack, NbtKeys.EMF_APPLIED_BAIT);
-
-                if (rodNBT == null || rodNBT.isEmpty()) {
-                    return lore;
-                }
-
-                int baitCount = 0;
-
-                for (String bait : rodNBT.split(",")) {
-                    baitCount++;
-                    Message message = new Message(BaitFile.getInstance().getBaitFormat());
-                    message.setAmount(bait.split(":")[1]);
-                    message.setBait(getBaitFormatted(bait.split(":")[0]));
-                    lore.add(message.getRawMessage(true));
-                }
-
-                if (BaitFile.getInstance().showUnusedBaitSlots()) {
-                    for (int i = baitCount; i < BaitFile.getInstance().getMaxBaits(); i++) {
-                        lore.add(FishUtils.translateColorCodes(BaitFile.getInstance().unusedBaitSlotFormat()));
-                    }
-                }
+                lore.addAll(getBaitsInfo(itemStack, lore));
             } else {
                 Message message = new Message(lineAddition);
                 message.setCurrentBaits(Integer.toString(getNumBaitsApplied(itemStack)));
                 message.setMaxBaits(Integer.toString(BaitFile.getInstance().getMaxBaits()));
                 lore.add(message.getRawMessage(true));
+            }
+        }
+
+        return lore;
+    }
+
+    private static List<String> getBaitsInfo(final ItemStack itemStack, final List<String> lore) {
+        final List<String> baitList = NbtUtils.getStringListOrStringBait(itemStack).stream()
+                .filter(Objects::nonNull)
+                .filter(s -> !s.isEmpty())
+                .toList();
+        //todo, requires testing but we don't need this now?
+        //                if (rodNBT == null || rodNBT.isEmpty()) {
+        //                    return lore;
+        //                }
+
+        int baitCount = baitList.size();
+
+        for (String bait : baitList) {
+            Message message = new Message(BaitFile.getInstance().getBaitFormat());
+            message.setBait(getBaitFormatted(bait.split(":")[0]));
+            message.setAmount(bait.split(":")[1]);
+            lore.add(message.getRawMessage(true));
+        }
+
+        if (BaitFile.getInstance().showUnusedBaitSlots()) {
+            for (int i = baitCount; i < BaitFile.getInstance().getMaxBaits(); i++) {
+                lore.add(FishUtils.translateColorCodes(BaitFile.getInstance().unusedBaitSlotFormat()));
             }
         }
 
