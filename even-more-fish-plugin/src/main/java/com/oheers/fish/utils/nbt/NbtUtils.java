@@ -81,20 +81,34 @@ public class NbtUtils {
         });
     }
 
+    /*
+    Attempts to get a bait list or a single bait string as a list
+     */
     public static List<String> getStringListOrStringBait(final ItemStack item) {
         return NBT.get(item, nbt -> {
             final ReadableNBTList<String> potentialBaitList = nbt.getStringList(NbtKeys.EMF_APPLIED_BAIT);
             if (potentialBaitList.isEmpty()) {
-                final String appliedBait = nbt.getString(NbtKeys.EMF_APPLIED_BAIT);
+                final String appliedBait = getString(item, NbtKeys.EMF_APPLIED_BAIT);
                 if (appliedBait == null) {
-                    return Collections.<String>emptyList();
+                    return Collections.emptyList();
                 }
                 return List.of(appliedBait.split(","));
             }
+
+            final String baitString = getString(item,NbtKeys.EMF_APPLIED_BAIT);
+            if (baitString == null) {
+                return Collections.emptyList();
+            }
+
+            return List.of(baitString.split(","));
         }
         );
     }
 
+    @Deprecated(since="1.7.4", forRemoval = true)
+    /**
+     * @deprecated use {@link NbtUtils#getStringListOrStringBait(ItemStack)} instead
+     */
     public static String[] getBaitArray(final ItemStack item) {
         final String appliedBait = NbtUtils.getString(item, NbtKeys.EMF_APPLIED_BAIT);
         if (appliedBait == null) return new String[0];
