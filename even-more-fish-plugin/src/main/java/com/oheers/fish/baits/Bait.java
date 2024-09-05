@@ -112,6 +112,7 @@ public class Bait {
      * This fetches the boost's lore from the config and inserts the boost-rates into the {boosts} variable. This needs
      * to be called after the bait theme is set and the boosts have been initialized, since it uses those variables.
      */
+    //todo, this is kind of similar to some code in BaitNBTManager.java
     private List<String> createBoostLore() {
 
         List<String> lore = new ArrayList<>();

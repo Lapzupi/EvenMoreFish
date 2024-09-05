@@ -8,6 +8,7 @@ import com.oheers.fish.exceptions.MaxBaitReachedException;
 import com.oheers.fish.exceptions.MaxBaitsReachedException;
 import com.oheers.fish.utils.nbt.NbtKeys;
 import com.oheers.fish.utils.nbt.NbtUtils;
+import com.oheers.fish.utils.nbt.NbtVersion;
 import de.tr7zw.changeme.nbtapi.NBT;
 import de.tr7zw.changeme.nbtapi.iface.ReadWriteNBT;
 import org.apache.commons.rng.sampling.CollectionSampler;
@@ -292,30 +293,6 @@ public class BaitNBTManager {
     }
 
     /**
-     * Runs through the metadata of the rod to try and figure out whether a certain bait is applied or not.
-     *
-     * @param itemStack The fishing rod in item stack form.
-     * @param bait      The name of the bait that could have been applied, must be the same as the time it was applied to the rod.
-     * @return If the fishing rod contains the bait or not.
-     */
-    public static boolean hasBaitApplied(ItemStack itemStack, String bait) {
-        ItemMeta meta = itemStack.getItemMeta();
-        if (meta == null) {
-            return false;
-        }
-
-        String[] baitList = NbtUtils.getBaitArray(itemStack);
-
-        for (String appliedBait : baitList) {
-            if (appliedBait.split(":")[0].equals(bait)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
      * Removes all the baits stored in the nbt of the fishing rod. It then returns the total number of baits deleted just
      * incase you fancy doing something special with this number. It first checks whether there's any baits actually on
      * the rod in the first place. It loops through each bait stored to find out how many will be deleted then simply removes
@@ -482,5 +459,39 @@ public class BaitNBTManager {
 
         DiscreteProbabilityCollectionSampler<Bait> sampler = new DiscreteProbabilityCollectionSampler<>(RandomSource.MWC_256.create(), weights);
         return sampler.sample();
+    }
+
+    public static void convertToCompatNbtItem(final NbtVersion nbtVersion, final ItemStack fishingRod) {
+        final List<String> appliedBaitString = NbtUtils.getStringListOrStringBait(fishingRod);
+
+        if (nbtVersion == NbtVersion.LEGACY) {
+            final String namespacedKey = NbtKeys.EMF_COMPOUND + ":" + NbtKeys.EMF_APPLIED_BAIT;
+            NBT.modify(fishingRod,nbt -> {
+                nbt.getCompound(NbtKeys.PUBLIC_BUKKIT_VALUES).removeKey(namespacedKey);
+            });
+
+            if (NBT.get(fishingRod, nbt -> {
+                return nbt.hasTag(namespacedKey);
+            })) {
+                NBT.modify(fishingRod, nbt -> {
+                    nbt.removeKey(namespacedKey);
+                    nbt.getCompound("display").getStringList("Lore").clear();
+                });
+            }
+        }
+
+        if (nbtVersion == NbtVersion.NBTAPI) {
+            NBT.modify(fishingRod, nbt -> {
+                nbt.removeKey(NbtKeys.EMF_COMPOUND + ":" + NbtKeys.EMF_APPLIED_BAIT);
+            });
+        }
+
+        //todo
+        if (appliedBaitString.size() == 1) {
+            NBT.modify(fishingRod, nbt -> {
+                nbt.getOrCreateCompound(NbtKeys.EMF_COMPOUND).setString(NbtKeys.EMF_APPLIED_BAIT, appliedBaitString.get(0));
+            });
+        }
+
     }
 }

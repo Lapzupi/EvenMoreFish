@@ -6,10 +6,7 @@ import com.oheers.fish.config.messages.ConfigMessage;
 import com.oheers.fish.config.messages.Message;
 import com.oheers.fish.exceptions.MaxBaitReachedException;
 import com.oheers.fish.exceptions.MaxBaitsReachedException;
-import com.oheers.fish.utils.nbt.NbtKeys;
-import com.oheers.fish.utils.nbt.NbtUtils;
 import com.oheers.fish.utils.nbt.NbtVersion;
-import de.tr7zw.changeme.nbtapi.NBT;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -54,7 +51,7 @@ public class BaitListener implements Listener {
 
         NbtVersion nbtVersion = NbtVersion.getVersion(potentialFishingRod);
         if (nbtVersion != NbtVersion.COMPAT) {
-            convertToCompatNbtItem(nbtVersion, potentialFishingRod);
+            BaitNBTManager.convertToCompatNbtItem(nbtVersion, potentialFishingRod);
         }
 
         try {
@@ -92,37 +89,6 @@ public class BaitListener implements Listener {
             cursor.setAmount(cursor.getAmount() + cursorModifier);
             event.getWhoClicked().setItemOnCursor(cursor);
         }
-    }
-
-    private void convertToCompatNbtItem(final NbtVersion nbtVersion, final ItemStack fishingRod) {
-        final String appliedBaitString = NbtUtils.getString(fishingRod, NbtKeys.EMF_APPLIED_BAIT);
-
-        if (nbtVersion == NbtVersion.LEGACY) {
-            final String namespacedKey = NbtKeys.EMF_COMPOUND + ":" + NbtKeys.EMF_APPLIED_BAIT;
-            NBT.modify(fishingRod,nbt -> {
-                nbt.getCompound(NbtKeys.PUBLIC_BUKKIT_VALUES).removeKey(namespacedKey);
-            });
-
-            if (NBT.get(fishingRod, nbt -> {
-                return nbt.hasTag(namespacedKey);
-            })) {
-                NBT.modify(fishingRod, nbt -> {
-                    nbt.removeKey(namespacedKey);
-                    nbt.getCompound("display").getStringList("Lore").clear();
-                });
-            }
-        }
-
-        if (nbtVersion == NbtVersion.NBTAPI) {
-            NBT.modify(fishingRod, nbt -> {
-                nbt.removeKey(NbtKeys.EMF_COMPOUND + ":" + NbtKeys.EMF_APPLIED_BAIT);
-            });
-        }
-
-        NBT.modify(fishingRod, nbt -> {
-            nbt.getOrCreateCompound(NbtKeys.EMF_COMPOUND).setString(NbtKeys.EMF_APPLIED_BAIT, appliedBaitString);
-        });
-
     }
 
     private boolean anvilCheck(InventoryClickEvent event) {

@@ -4,8 +4,8 @@ import org.bukkit.inventory.ItemStack;
 
 public class ApplicationResult {
 
-    ItemStack fishingRod;
-    int cursorItemModifier;
+    private final ItemStack fishingRod;
+    private final int cursorItemModifier;
 
     /**
      * This is returned when a bait has been applied to a fishing rod, the remaining cursor items is how many of the bait
