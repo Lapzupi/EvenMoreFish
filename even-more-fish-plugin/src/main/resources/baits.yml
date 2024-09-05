@@ -96,6 +96,13 @@ general:
   show-unused-slots: true
 
 format:
+  # Where the lore will start.
+  # This is good for when you have multiple plugins making changes to an item.
+  # This will make the rod or bait lore only start from a certain line.
+  compat:
+    rod-lore-start: 0
+    bait-lore-start: 0
+
   # How the lore should look ({baits} takes up multiple lines)
   rod-lore:
     - "&f"

@@ -125,7 +125,7 @@ public class BaitNBTManager {
         AtomicBoolean maxBait = new AtomicBoolean(false);
         AtomicInteger cursorModifier = new AtomicInteger();
 
-        StringBuilder combined = new StringBuilder();
+        @Deprecated StringBuilder combined = new StringBuilder();
         if (isBaitedRod(item)) {
             try {
                 if (doingLoreStuff) {
@@ -325,7 +325,7 @@ public class BaitNBTManager {
      * @return The number of baits that were deleted in total.
      */
     public static int deleteAllBaits(ItemStack itemStack) {
-        if (NbtUtils.hasKey(itemStack, NbtKeys.EMF_APPLIED_BAIT)) {
+        if (!NbtUtils.hasKey(itemStack, NbtKeys.EMF_APPLIED_BAIT)) {
             return 0;
         }
 
@@ -468,12 +468,12 @@ public class BaitNBTManager {
      * @param baitID The baitID the bait is registered under in baits.yml
      * @return How the bait should look in the lore of the fishing rod, for example.
      */
-    private static String getBaitFormatted(String baitID) {
+    private static @NotNull String getBaitFormatted(String baitID) {
         Bait bait = EvenMoreFish.getInstance().getBaits().get(baitID);
         return FishUtils.translateColorCodes(bait.getDisplayName());
     }
 
-    private static Bait getRandomBait(final Map<Bait, Double> weights) {
+    private static Bait getRandomBait(final @NotNull Map<Bait, Double> weights) {
         if (new HashSet<>(weights.values()).size() == 1) {
             //when everything is equal chance...
             CollectionSampler<Bait> sampler = new CollectionSampler<>(RandomSource.MWC_256.create(), weights.keySet());
