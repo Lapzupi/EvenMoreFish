@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.bukkit.yml)
     alias(libs.plugins.shadow)
     alias(libs.plugins.grgit)
+    alias(libs.plugins.error.prone)
 }
 
 group = "com.oheers.evenmorefish"
@@ -97,11 +98,15 @@ dependencies {
     library(libs.commons.codec)
 
     library(libs.json.simple)
+
+    errorprone(libs.error.prone.core)
+    errorprone(project(":even-more-fish-custom-errors"))
 }
 
 bukkit {
     name = "EvenMoreFish"
     author = "Oheers"
+    authors = listOf("https://github.com/Oheers/EvenMoreFish/graphs/contributors")
     main = "com.oheers.fish.EvenMoreFish"
     version = project.version.toString()
     description = project.description.toString()

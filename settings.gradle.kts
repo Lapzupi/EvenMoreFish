@@ -1,5 +1,6 @@
 rootProject.name = "even-more-fish"
 
+include(":even-more-fish-custom-errors")
 include(":even-more-fish-api")
 include(":even-more-fish-addons-j17")
 include(":even-more-fish-plugin")
@@ -79,6 +80,15 @@ dependencyResolutionManagement {
 
             plugin("grgit", "org.ajoberstar.grgit").version("5.2.2")
 
+            version("error-prone", "2.36.0")
+            library("error-prone-core", "com.google.errorprone","error_prone_core").versionRef("error-prone")
+            library("error-prone-annotations", "com.google.errorprone","error_prone_annotations").versionRef("error-prone")
+            library("error-prone-test-helpers", "com.google.errorprone","error_prone_test_helpers").versionRef("error-prone")
+
+            plugin("error-prone", "net.ltgt.errorprone").version("4.1.0")
+
+            library("junit-platform","org.junit:junit-bom:5.11.3")
+            library("junit-jupiter", "org.junit.jupiter","junit-jupiter").withoutVersion()
         }
     }
 }

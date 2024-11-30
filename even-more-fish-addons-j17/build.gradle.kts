@@ -1,5 +1,6 @@
 plugins {
     id("com.oheers.evenmorefish.java-conventions")
+    alias(libs.plugins.error.prone)
 }
 
 
@@ -20,6 +21,9 @@ dependencies {
     compileOnly(libs.itemsadder.api)
     compileOnly(libs.headdatabase.api)
     compileOnly(project(":even-more-fish-api"))
+
+    errorprone(libs.error.prone.core)
+    errorprone(project(":even-more-fish-custom-errors"))
 }
 
 java {
