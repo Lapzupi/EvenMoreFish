@@ -98,12 +98,7 @@ public class FishingProcessor implements Listener {
     }
 
     private boolean isSpaceForNewFish(Inventory inventory) {
-        for (ItemStack item : inventory.getContents()) {
-            if (item == null) {
-                return true;
-            }
-        }
-        return false;
+        return inventory.firstEmpty() != -1;
     }
 
     private boolean isCustomFishAllowed(Player player) {
